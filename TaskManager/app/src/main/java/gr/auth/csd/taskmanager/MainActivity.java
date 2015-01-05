@@ -4,8 +4,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.text.ParseException;
+import java.util.Date;
 
 
 public class MainActivity extends ActionBarActivity
@@ -15,6 +19,23 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
+
+        long[] freeMemory = MemoryQuery.freeMemory();
+        long[] availableMemory = MemoryQuery.totalMemory();
+        Date today = new Date();
+
+        try {
+            DBHandler dbHandler = new DBHandler(this);
+            Log.d("Insert today's stats", "Inserting");
+            dbHandler.addRecord(new MemoryInfo(today, freeMemory[0], availableMemory[0],
+                    freeMemory[1], availableMemory[1]));
+            Log.d("getRecord", dbHandler.getRecord(today).toString());
+        }
+        catch (android.database.sqlite.SQLiteConstraintException e) {
+            Log.d("DuplicateKey", "Duplicate entry for today");
+        }
+        catch (ParseException e){}
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         MemoryInfoFragment memoryInfoFragment = new MemoryInfoFragment();

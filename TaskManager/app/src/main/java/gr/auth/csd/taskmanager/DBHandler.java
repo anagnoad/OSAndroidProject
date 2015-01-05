@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -96,6 +97,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(PROPERTY_EXTERNAL_MEMORY_FREE, obj.getExternalMemoryFree());
         values.put(PROPERTY_EXTERNAL_MEMORY_AVAILABLE, obj.getExternalMemoryAvailable());
 
+        //debug
+        Log.d("DEBUG in addRecord", df.format(obj.getDateCaptured()));
+
+
         db.insert(TABLE_MEMORY_INFO, null, values);
         db.close();
     }
@@ -103,15 +108,18 @@ public class DBHandler extends SQLiteOpenHelper {
     public MemoryInfo getRecord(Date date) throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Cursor cursor = db.query(TABLE_MEMORY_INFO, new String[] { KEY_DATE, PROPERTY_INTERNAL_MEMORY_FREE,
                 PROPERTY_INTERNAL_MEMORY_AVAILABLE, PROPERTY_EXTERNAL_MEMORY_FREE, PROPERTY_EXTERNAL_MEMORY_AVAILABLE}, KEY_DATE + "=?",
-                new String[] { date.toString() }, null, null, null, null);
-        if (cursor != null)
+                new String[] { df.format(date) }, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
             cursor.moveToFirst();
-
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        }
+        else {return null;}
         MemoryInfo memoryInfo = new MemoryInfo(df.parse(cursor.getString(0)), Long.parseLong(cursor.getString(1)),
                 Long.parseLong(cursor.getString(2)), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)));
+
+        Log.d("DEBUG in addRecord", cursor.getString(0));
 
         return memoryInfo;
     }

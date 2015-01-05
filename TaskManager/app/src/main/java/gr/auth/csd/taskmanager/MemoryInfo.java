@@ -60,5 +60,15 @@ public class MemoryInfo {
         this.externalMemoryAvailable = externalMemoryAvailable;
     }
 
+    @Override
+    public String toString() {
+        return "MemoryInfo{" +
+                "dateCaptured=" + dateCaptured +
+                ", internalMemoryFree=" + internalMemoryFree +
+                ", internalMemoryAvailable=" + internalMemoryAvailable +
+                ", externalMemoryFree=" + externalMemoryFree +
+                ", externalMemoryAvailable=" + externalMemoryAvailable +
+                '}';
+    }
 
 }
