@@ -15,6 +15,8 @@ List<ActivityManager.RunningAppProcessInfo> getRunningAppProcesses() # deprecate
 	* pid
 	* processName
 	
+	* pid
+	* processName
 `ActivityManager.getMemoryInfo(int[] pids)`
 
 
