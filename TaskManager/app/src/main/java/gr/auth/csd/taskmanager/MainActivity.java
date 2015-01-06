@@ -2,6 +2,7 @@ package gr.auth.csd.taskmanager;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,15 +14,14 @@ import java.util.Date;
 
 
 public class MainActivity extends ActionBarActivity
-                          implements MemoryInfoFragment.OnFragmentInteractionListener {
-
-    @Override
+//                          implements MemoryInfoFragment.OnFragmentInteractionListener {
+                            implements DeviceInfoFragment.OnFragmentInteractionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-        long[] freeMemory = MemoryQuery.freeMemory();
-        long[] availableMemory = MemoryQuery.totalMemory();
+        long[] freeMemory = SystemQuery.freeMemory();
+        long[] availableMemory = SystemQuery.totalMemory();
         Date today = new Date();
 
         try {
@@ -38,8 +38,12 @@ public class MainActivity extends ActionBarActivity
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        MemoryInfoFragment memoryInfoFragment = new MemoryInfoFragment();
-        fragmentTransaction.replace(android.R.id.content, memoryInfoFragment);
+//        MemoryInfoFragment memoryInfoFragment = new MemoryInfoFragment();
+//        fragmentTransaction.replace(android.R.id.content, memoryInfoFragment);
+//        fragmentTransaction.commit();
+        DeviceInfoFragment deviceInfoFragment = new DeviceInfoFragment();
+        SystemQuery.getSystemMetrics(this.getApplicationContext(), deviceInfoFragment);
+        fragmentTransaction.replace(android.R.id.content, deviceInfoFragment);
         fragmentTransaction.commit();
     }
 
@@ -66,8 +70,13 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+//    @Override
+//    public void onFragmentInteraction(String id) {
+//
+//    }
+
     @Override
-    public void onFragmentInteraction(String id) {
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }

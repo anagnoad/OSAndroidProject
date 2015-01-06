@@ -1,28 +1,29 @@
 package gr.auth.csd.taskmanager;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-
-import gr.auth.csd.taskmanager.dummy.DummyContent;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link DeviceInfoFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link DeviceInfoFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class MemoryInfoFragment extends ListFragment {
-
+public class DeviceInfoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private TextView sampleTextView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -30,9 +31,17 @@ public class MemoryInfoFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
-    public static MemoryInfoFragment newInstance(String param1, String param2) {
-        MemoryInfoFragment fragment = new MemoryInfoFragment();
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment DeviceInfoFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static DeviceInfoFragment newInstance(String param1, String param2) {
+        DeviceInfoFragment fragment = new DeviceInfoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -40,28 +49,36 @@ public class MemoryInfoFragment extends ListFragment {
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MemoryInfoFragment() {
+    public DeviceInfoFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<Process>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, SystemQuery.getAllProcesses(getActivity().getApplicationContext())));
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+        View inflatedView = inflater.inflate(R.layout.fragment_device_info, container, false);
+        this.sampleTextView = (TextView)inflatedView.findViewById(R.id.sampleTextView);
+        return inflatedView;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -80,18 +97,6 @@ public class MemoryInfoFragment extends ListFragment {
         mListener = null;
     }
 
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -104,7 +109,10 @@ public class MemoryInfoFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(Uri uri);
     }
 
+    public TextView getSampleTextView() {
+        return sampleTextView;
+    }
 }
