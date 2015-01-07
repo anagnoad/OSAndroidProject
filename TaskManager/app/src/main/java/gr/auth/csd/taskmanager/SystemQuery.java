@@ -94,15 +94,19 @@ public class SystemQuery {
         return toBeReturned;
     }
 
-    public static List<HashMap<String,String>> getSystemMetrics(Context applicationContext, final DeviceInfoFragment fragment) {
-        List<HashMap<String, String>> toBeReturned = new ArrayList<>();
+    public static HashMap<String,String> getSystemMetrics(Context applicationContext, final DeviceInfoFragment fragment) {
+        HashMap<String, String> toBeReturned = new HashMap<>();
         String osName = System.getProperty("os.name");
+        toBeReturned.put("OS Name", osName);
         String kernelVersion = System.getProperty("os.version");
+        toBeReturned.put("Kernel Version", kernelVersion);
         String modelName = Build.MODEL;
-        long upTimeMins = SystemClock.uptimeMillis()/(1000*60);
+        toBeReturned.put("Model Name", modelName);
+        Long upTimeMins = SystemClock.uptimeMillis()/(1000*60);
+        toBeReturned.put("UpTime", upTimeMins.toString());
         TelephonyManager tm = (TelephonyManager)applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = tm.getNetworkType();
-        String networkTypeString;
+        String networkTypeString="";
         switch(networkType)
         {
             case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -136,7 +140,7 @@ public class SystemQuery {
                 networkTypeString  = "LTE";
                 break;
         }
-        String phonestate;
+        toBeReturned.put("Network Type", networkTypeString);
 
         TelephonyManager telMng = (TelephonyManager)applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
         telMng.listen(new PhoneStateListener() {
@@ -166,16 +170,15 @@ public class SystemQuery {
         }, PhoneStateListener.LISTEN_SERVICE_STATE);
 
 
-        /*
         BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive( Context context, Intent intent )
-            {
-                int level = intent.getIntExtra( "level", 0 );
-                percentage = String.valueOf(level) + "%" ;
+            public void onReceive( Context context, Intent intent ) {
+                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
+                fragment.getSampleTextView().setText( String.valueOf(level) + "%");
             }
         };
-        registerReceiver( batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );*/
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = applicationContext.registerReceiver(batteryReceiver,ifilter);
         return toBeReturned;
     }
 

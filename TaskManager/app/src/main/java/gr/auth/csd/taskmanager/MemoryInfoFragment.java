@@ -58,8 +58,11 @@ public class MemoryInfoFragment extends ListFragment {
 
 
         // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<Process>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, SystemQuery.getAllProcesses(getActivity().getApplicationContext())));
+        setListAdapter(new ArrayAdapter<Process>(
+                getActivity(),
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                SystemQuery.getAllProcesses(getActivity().getApplicationContext())));
     }
 
 

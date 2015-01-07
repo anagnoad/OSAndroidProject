@@ -7,7 +7,14 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -24,6 +31,7 @@ public class DeviceInfoFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private TextView sampleTextView;
+    private ListView sampleListView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,6 +78,16 @@ public class DeviceInfoFragment extends Fragment {
 
         View inflatedView = inflater.inflate(R.layout.fragment_device_info, container, false);
         this.sampleTextView = (TextView)inflatedView.findViewById(R.id.sampleTextView);
+        this.sampleListView = (ListView)inflatedView.findViewById(R.id.sampleListView);
+        HashMap<String,String> deviceInfoData = SystemQuery.getSystemMetrics(this.getActivity().getApplicationContext(),this);
+        // place adapter here;
+        List<HashMap<String,String>> aList = new ArrayList<>();
+        String[] data = new String[deviceInfoData.keySet().size()];
+        deviceInfoData.keySet().toArray(data);
+        SimpleAdapter adapter = new SimpleAdapter(this.getActivity().getApplicationContext()
+                , aList, android.R.layout.simple_expandable_list_item_2
+                ,data ,new int[]{android.R.id.text1, android.R.id.text2});
+        this.sampleListView.setAdapter(adapter);
         return inflatedView;
     }
 

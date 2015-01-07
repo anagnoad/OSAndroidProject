@@ -14,8 +14,8 @@ import java.util.Date;
 
 
 public class MainActivity extends ActionBarActivity
-//                          implements MemoryInfoFragment.OnFragmentInteractionListener {
-                            implements DeviceInfoFragment.OnFragmentInteractionListener {
+                          implements MemoryInfoFragment.OnFragmentInteractionListener ,
+        DeviceInfoFragment.OnFragmentInteractionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -77,6 +77,11 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
 
     }
 }
