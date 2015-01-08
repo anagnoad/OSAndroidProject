@@ -1,18 +1,14 @@
 package gr.auth.csd.taskmanager;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.os.Build;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
 
 import gr.auth.csd.taskmanager.dummy.DummyContent;
 
@@ -23,7 +19,7 @@ import gr.auth.csd.taskmanager.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class MemoryInfoFragment extends ListFragment {
+public class ProcessesFragment extends ListFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,8 +33,8 @@ public class MemoryInfoFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
-    public static MemoryInfoFragment newInstance(String param1, String param2) {
-        MemoryInfoFragment fragment = new MemoryInfoFragment();
+    public static ProcessesFragment newInstance(String param1, String param2) {
+        ProcessesFragment fragment = new ProcessesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -50,7 +46,7 @@ public class MemoryInfoFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MemoryInfoFragment() {
+    public ProcessesFragment() {
     }
 
     @Override
@@ -62,17 +58,13 @@ public class MemoryInfoFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        DBHandler db = new DBHandler(this.getActivity().getApplicationContext());
-        try {
-            List<MemoryInfo> memoryInfoList = db.getAllRecords();
-            // TODO: Change Adapter to display your content
-            setListAdapter(new ArrayAdapter<MemoryInfo>(getActivity(),
-                    android.R.layout.simple_list_item_1, android.R.id.text1, memoryInfoList));
-        }
-        catch (ParseException e)
-        {
+        setListAdapter(new ArrayAdapter<Process>(
+                getActivity(),
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                SystemQuery.getAllProcesses(getActivity().getApplicationContext())));
+        // TODO: Change Adapter to display your content
 
-        }
     }
 
 
@@ -101,7 +93,18 @@ public class MemoryInfoFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+//            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            Process proc = (Process)l.getAdapter().getItem(position);
+            String processInfo = proc.toLongString();
+            new AlertDialog.Builder(this.getActivity())
+                    .setTitle("Process info")
+                    .setMessage(processInfo)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .show();
         }
     }
 

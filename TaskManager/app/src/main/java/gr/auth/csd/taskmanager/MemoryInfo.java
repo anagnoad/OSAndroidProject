@@ -1,5 +1,7 @@
 package gr.auth.csd.taskmanager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -62,13 +64,23 @@ public class MemoryInfo {
 
     @Override
     public String toString() {
-        return "MemoryInfo{" +
-                "dateCaptured=" + dateCaptured +
-                ", internalMemoryFree=" + internalMemoryFree +
-                ", internalMemoryAvailable=" + internalMemoryAvailable +
-                ", externalMemoryFree=" + externalMemoryFree +
-                ", externalMemoryAvailable=" + externalMemoryAvailable +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        builder.append(df.format(dateCaptured));
+        builder.append("\n\n");
+        builder.append("Internal: ");
+        builder.append(internalMemoryFree/1024/1024 + "/" + internalMemoryAvailable/1024/1024 + " MB");
+        builder.append("\n");
+        builder.append("External: ");
+        builder.append(externalMemoryFree/1024/1024 + "/" + externalMemoryAvailable/1024/1024 + " MB");
+        return builder.toString();
+//        return "MemoryInfo{" +
+//                "dateCaptured=" + dateCaptured +
+//                ", internalMemoryFree=" + internalMemoryFree +
+//                ", internalMemoryAvailable=" + internalMemoryAvailable +
+//                ", externalMemoryFree=" + externalMemoryFree +
+//                ", externalMemoryAvailable=" + externalMemoryAvailable +
+//                '}';
     }
 
 }

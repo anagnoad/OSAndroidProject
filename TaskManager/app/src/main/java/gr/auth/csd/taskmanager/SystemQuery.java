@@ -41,9 +41,15 @@ public class SystemQuery {
         long[] total = new long[2];
         StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
         StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        total[0]  = ( (long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
-        total[1] = ( (long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
-
+        if(Build.VERSION.SDK_INT>18) {
+            total[0] = ((long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
+            total[1] = ((long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
+        }
+        else
+        {
+            total[0] = ((long) statFs.getBlockCount() * (long) statFs.getBlockSize());
+            total[1] = ((long) statFsE.getBlockCount() * (long) statFsE.getBlockSize());
+        }
         return total;
     }
 
@@ -52,8 +58,14 @@ public class SystemQuery {
         long[] free = new long[2];
         StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
         StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        free[0]   = (statFs.getAvailableBlocksLong() * (long) statFs.getBlockSizeLong());
-        free[1]   = (statFsE.getAvailableBlocksLong() * (long) statFsE.getBlockSizeLong());
+        if(Build.VERSION.SDK_INT>18) {
+            free[0] = (statFs.getAvailableBlocksLong() * (long) statFs.getBlockSizeLong());
+            free[1] = (statFsE.getAvailableBlocksLong() * (long) statFsE.getBlockSizeLong());
+        }
+        else {
+            free[0] = (statFs.getAvailableBlocks() * (long) statFs.getBlockSize());
+            free[1] = (statFsE.getAvailableBlocks() * (long) statFsE.getBlockSize());
+        }
         return free;
     }
 
@@ -64,11 +76,25 @@ public class SystemQuery {
         long[] occupied = new long[2];
         StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
         StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        total[0]  = ((long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
-        free[0]   = (statFs.getAvailableBlocksLong()   * (long) statFs.getBlockSizeLong());
+        if(Build.VERSION.SDK_INT>18) {
+            total[0] = ((long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
+            free[0] = (statFs.getAvailableBlocksLong() * (long) statFs.getBlockSizeLong());
+        }
+        else
+        {
+            total[0] = ((long) statFs.getBlockCount() * (long) statFs.getBlockSize());
+            free[0] = (statFs.getAvailableBlocks() * (long) statFs.getBlockSize());
+        }
         occupied[0]   = total[0] - free[0];
-        total[1]  = ((long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
-        free[1]   = (statFsE.getAvailableBlocksLong()   * (long) statFsE.getBlockSizeLong());
+        if(Build.VERSION.SDK_INT>18) {
+            total[1] = ((long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
+            free[1] = (statFsE.getAvailableBlocksLong() * (long) statFsE.getBlockSizeLong());
+        }
+        else
+        {
+            total[1] = ((long) statFsE.getBlockCount() * (long) statFsE.getBlockSize());
+            free[1] = (statFsE.getAvailableBlocks() * (long) statFsE.getBlockSize());
+        }
         occupied[1]   = total[1] - free[1];
 
         return occupied;
@@ -96,7 +122,7 @@ public class SystemQuery {
 
     public static HashMap<String,String> getSystemMetrics(Context applicationContext, final DeviceInfoFragment fragment) {
         HashMap<String, String> toBeReturned = new HashMap<>();
-        String osName = System.getProperty("os.name");
+        String osName = Build.VERSION.RELEASE;//System.getProperty("os.name");
         toBeReturned.put("OS Name", osName);
         String kernelVersion = System.getProperty("os.version");
         toBeReturned.put("Kernel Version", kernelVersion);
@@ -141,7 +167,14 @@ public class SystemQuery {
                 break;
         }
         toBeReturned.put("Network Type", networkTypeString);
+        toBeReturned.put("Network State", "N/A");
+        toBeReturned.put("Battery", "N/A");
 
+        long[] freeMemory = freeMemory();
+        toBeReturned.put("Internal Memory Available", String.valueOf(freeMemory[0]));
+        toBeReturned.put("External Memory Available", String.valueOf(freeMemory[1]));
+
+      //  HashMap<String,String> test = (HashMap<String,String>)sampleListView.getAdapter().getItem(0);
         TelephonyManager telMng = (TelephonyManager)applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
         telMng.listen(new PhoneStateListener() {
             @Override
@@ -151,19 +184,19 @@ public class SystemQuery {
 
                 switch(serviceState.getState()) {
                     case ServiceState.STATE_EMERGENCY_ONLY:
-                        fragment.getSampleTextView().setText("STATE_EMERGENCY_ONLY");
+                        fragment.refreshValue("Network State", "STATE_EMERGENCY_ONLY");
                         break;
                     case ServiceState.STATE_IN_SERVICE:
-                        fragment.getSampleTextView().setText("STATE_IN_SERVICE");
+                        fragment.refreshValue("Network State", "STATE_IN_SERVICE");
                         break;
                     case ServiceState.STATE_OUT_OF_SERVICE:
-                        fragment.getSampleTextView().setText("STATE_OUT_OF_SERVICE");
+                        fragment.refreshValue("Network State", "STATE_OUT_OF_SERVICE");
                         break;
                     case ServiceState.STATE_POWER_OFF:
-                        fragment.getSampleTextView().setText("STATE_POWER_OFF");
+                        fragment.refreshValue("Network State", "STATE_POWER_OFF");
                         break;
                     default:
-                        fragment.getSampleTextView().setText("Unknown");
+                        fragment.refreshValue("Network State", "UNKNOWN");
                         break;
                 }
             }
@@ -174,7 +207,7 @@ public class SystemQuery {
             @Override
             public void onReceive( Context context, Intent intent ) {
                 int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
-                fragment.getSampleTextView().setText( String.valueOf(level) + "%");
+                fragment.refreshValue("Battery", String.valueOf(level) + "%");
             }
         };
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);

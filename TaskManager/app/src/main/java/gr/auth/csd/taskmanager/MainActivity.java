@@ -1,24 +1,122 @@
 package gr.auth.csd.taskmanager;
 
+import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 public class MainActivity extends ActionBarActivity
-                          implements MemoryInfoFragment.OnFragmentInteractionListener ,
-        DeviceInfoFragment.OnFragmentInteractionListener {
+                          implements MemoryInfoFragment.OnFragmentInteractionListener,
+                                     DeviceInfoFragment.OnFragmentInteractionListener,
+                                     ProcessesFragment.OnFragmentInteractionListener{
+
+    private HashMap<String,Fragment> fragments;
+    final static HashMap<String, Integer> positioning;
+
+    static {
+        positioning = new HashMap<>();
+        positioning.put("Memory Stats", 0);
+        positioning.put("Processes", 1);
+        positioning.put("Device Info", 2);
+    }
+
+    public MainActivity()
+    {
+        super();
+        fragments = new HashMap<>();
+        MemoryInfoFragment memoryInfoFragment = new MemoryInfoFragment();
+        DeviceInfoFragment deviceInfoFragment = new DeviceInfoFragment();
+        ProcessesFragment processesFragment = new ProcessesFragment();
+        fragments.put("Memory Stats", memoryInfoFragment);
+        fragments.put("Processes", processesFragment);
+        fragments.put("Device Info", deviceInfoFragment);
+    }
+    private ArrayList<Map<String, Object>> buildData(HashMap<String,Fragment> deviceInfoData)
+    {
+        ArrayList<Map<String,Object>> list = new ArrayList<>();
+        for(int i=0;i<positioning.size();++i) {
+            list.add(null);
+        }
+        Set<Map.Entry<String,Fragment>> keyEntries = deviceInfoData.entrySet();
+        for(Map.Entry<String,Fragment> e : keyEntries)
+        {
+            list.set(positioning.get(e.getKey()), putData(e.getKey(), e.getValue()));
+        }
+        return list;
+    }
+
+    private HashMap<String,Object> putData (String item, Fragment fragment)
+    {
+        HashMap<String, Object> itemM = new HashMap<>();
+        itemM.put("item",item);
+        itemM.put("subitem",fragment);
+        return itemM;
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+        ListView menuOptions = (ListView) this.findViewById(R.id.left_drawer);
+        String[] from = {"item"};
+        ArrayList<Map<String,Object>> list = buildData(this.fragments);
+
+        SimpleAdapter adapter = new SimpleAdapter(this.getApplicationContext()
+                , list, android.R.layout.simple_list_item_2
+                , from ,new int[]{android.R.id.text1});
+        menuOptions.setAdapter(adapter);
+        menuOptions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selection = "";
+                Set<Map.Entry<String, Integer>> entries = positioning.entrySet();
+                for (Map.Entry<String, Integer> entry : entries) {
+                    if (entry.getValue() == position) {
+                        selection = entry.getKey();
+                        break;
+                    }
+                }
+                Fragment fragmentToBeCommitted = fragments.get(selection);
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, fragmentToBeCommitted);
+                fragmentTransaction.commit();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    android.support.v7.app.ActionBar ab = getSupportActionBar();
+                    ab.setSubtitle(selection);
+                }
+                DrawerLayout theDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+                theDrawer.closeDrawers();
+            }
+        });
 
         long[] freeMemory = SystemQuery.freeMemory();
         long[] availableMemory = SystemQuery.totalMemory();
@@ -43,8 +141,12 @@ public class MainActivity extends ActionBarActivity
 //        fragmentTransaction.commit();
         DeviceInfoFragment deviceInfoFragment = new DeviceInfoFragment();
         SystemQuery.getSystemMetrics(this.getApplicationContext(), deviceInfoFragment);
-        fragmentTransaction.replace(android.R.id.content, deviceInfoFragment);
+        fragmentTransaction.replace(R.id.content_frame, deviceInfoFragment);
         fragmentTransaction.commit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            android.support.v7.app.ActionBar ab = getSupportActionBar();
+            ab.setSubtitle("Device Info");
+        }
     }
 
 

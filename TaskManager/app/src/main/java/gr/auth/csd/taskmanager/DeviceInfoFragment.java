@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -36,6 +39,21 @@ public class DeviceInfoFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    final static HashMap<String, Integer> positioning;
+
+    static {
+        positioning = new HashMap<>();
+        positioning.put("OS Name", 0);
+        positioning.put("Kernel Version", 1);
+        positioning.put("Model Name", 2);
+        positioning.put("Battery", 3);
+        positioning.put("UpTime", 4);
+        positioning.put("Network State", 5);
+        positioning.put("Network Type", 6);
+        positioning.put("Internal Memory Available", 7);
+        positioning.put("External Memory Available", 8);
+    }
 
     private OnFragmentInteractionListener mListener;
 
@@ -75,20 +93,41 @@ public class DeviceInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View inflatedView = inflater.inflate(R.layout.fragment_device_info, container, false);
-        this.sampleTextView = (TextView)inflatedView.findViewById(R.id.sampleTextView);
         this.sampleListView = (ListView)inflatedView.findViewById(R.id.sampleListView);
         HashMap<String,String> deviceInfoData = SystemQuery.getSystemMetrics(this.getActivity().getApplicationContext(),this);
-        // place adapter here;
-        List<HashMap<String,String>> aList = new ArrayList<>();
-        String[] data = new String[deviceInfoData.keySet().size()];
-        deviceInfoData.keySet().toArray(data);
+        ArrayList<Map<String,String>> list = buildData(deviceInfoData);
+        String[] from = {"item", "subitem"};
         SimpleAdapter adapter = new SimpleAdapter(this.getActivity().getApplicationContext()
-                , aList, android.R.layout.simple_expandable_list_item_2
-                ,data ,new int[]{android.R.id.text1, android.R.id.text2});
+                , list, android.R.layout.simple_list_item_2
+                , from ,new int[]{android.R.id.text1, android.R.id.text2});
         this.sampleListView.setAdapter(adapter);
+//        Log.d("TEST",sampleListView.getAdapter().getItem(0).toString());
+
         return inflatedView;
+    }
+
+    private ArrayList<Map<String, String>> buildData(HashMap<String,String> deviceInfoData)
+    {
+        ArrayList<Map<String,String>> list = new ArrayList<>();
+        for(int i=0;i<9;++i) {
+            list.add(null);
+        }
+        Set<Map.Entry<String,String>> keyEntries = deviceInfoData.entrySet();
+        for(Map.Entry<String,String> e : keyEntries)
+        {
+//            list.add(putData(e.getKey(), e.getValue()));
+            list.set(positioning.get(e.getKey()), putData(e.getKey(), e.getValue()));
+        }
+        return list;
+    }
+
+    private HashMap<String,String> putData (String item, String subitem)
+    {
+        HashMap<String, String> itemM = new HashMap<>();
+        itemM.put("item",item);
+        itemM.put("subitem", subitem);
+        return itemM;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -132,5 +171,15 @@ public class DeviceInfoFragment extends Fragment {
 
     public TextView getSampleTextView() {
         return sampleTextView;
+    }
+
+    public void refreshValue(String key, String newValue) {
+        HashMap<String, String> toBeAltered = (HashMap<String, String>) this.sampleListView.getAdapter().getItem(positioning.get(key));
+        toBeAltered.put("subitem", newValue);
+        SimpleAdapter sa = (SimpleAdapter)this.sampleListView.getAdapter();
+        sa.notifyDataSetChanged();
+        Log.d("debug", sa.getItem(positioning.get(key)).toString());
+
+        //        (HashMap<String, String>) this.sampleListView.getAdapter(). toBeAltered
     }
 }
