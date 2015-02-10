@@ -30,15 +30,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * This is the MainActivity class. It extends Android's ActionBarActivity class so as to manage its
+ * lifecycle, and implements the FragmentInteractionListeners of the three application's fragments.
+ */
 public class MainActivity extends ActionBarActivity
                           implements MemoryInfoFragment.OnFragmentInteractionListener,
                                      DeviceInfoFragment.OnFragmentInteractionListener,
                                      ProcessesFragment.OnFragmentInteractionListener{
-
+    /**
+     * A HashMap, containing instances of all available fragments.
+     * This will allow the activity to easily commit its fragments to the Fragment container.
+     */
     private HashMap<String,Fragment> fragments;
+    /**
+     * A  HashMap containing the order in which fragments should be positioned.
+     */
     final static HashMap<String, Integer> positioning;
 
+    // Static initialization of positioning HashMap
     static {
         positioning = new HashMap<>();
         positioning.put("Memory Stats", 0);
@@ -46,6 +56,10 @@ public class MainActivity extends ActionBarActivity
         positioning.put("Device Info", 2);
     }
 
+    /**
+     * Default ctor.
+     * Initializes the Fragments and puts them into the fragments HashMap.
+     */
     public MainActivity()
     {
         super();
@@ -57,6 +71,12 @@ public class MainActivity extends ActionBarActivity
         fragments.put("Processes", processesFragment);
         fragments.put("Device Info", deviceInfoFragment);
     }
+
+    /**
+     * Helper function needed for the slider's ListView
+     * @param deviceInfoData the HashMap of fragments
+     * @return ArrayList of Map<String,Object> needed for the ListView
+     */
     private ArrayList<Map<String, Object>> buildData(HashMap<String,Fragment> deviceInfoData)
     {
         ArrayList<Map<String,Object>> list = new ArrayList<>();
@@ -71,6 +91,14 @@ public class MainActivity extends ActionBarActivity
         return list;
     }
 
+    /**
+     * Helper function needed for the slider's ListView.
+     * We use an item/subitem logic, in which the "items" are considered the fragments' names
+     * and the subitems are their instances.
+     * @param item the fragment name (description)
+     * @param fragment the fragment instance
+     * @return HashMap<String,Object> needed for the slider's ListView
+     */
     private HashMap<String,Object> putData (String item, Fragment fragment)
     {
         HashMap<String, Object> itemM = new HashMap<>();
@@ -78,6 +106,7 @@ public class MainActivity extends ActionBarActivity
         itemM.put("subitem",fragment);
         return itemM;
     }
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

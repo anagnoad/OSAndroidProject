@@ -17,27 +17,55 @@ import java.util.List;
 import gr.auth.csd.taskmanager.MemoryInfo;
 
 /**
+ * The main DB class needed for the application. It extends SQLiteOpenHelper class, and holds our
+ * database schema, as well as provides methods for database manipulation (add, update, delete, etc.)
  * Created by Steve Laskaridis on 1/5/2015.
  */
 public class DBHandler extends SQLiteOpenHelper {
 
     // All Static variables
-    // Database Version
+    /**
+     * Database Version
+     */
     private static final int DATABASE_VERSION = 1;
 
-    // Database Name
+    /**
+     * Database Name
+     */
     private static final String DATABASE_NAME = "memoryDB";
 
-    // Contacts table name
+    /**
+     * Table Name
+     */
     private static final String TABLE_MEMORY_INFO = "memoryInfo";
 
     // Contacts Table Columns names
+    /**
+     * Column for the date field of each record.
+     */
     private static final String KEY_DATE = "date";
+    /**
+     * Column for the field of each records that holds the free internal memory.
+     */
     private static final String PROPERTY_INTERNAL_MEMORY_FREE = "internalMemoryFree";
+    /**
+     * Column for the field of each records that holds the total available internal memory.
+     */
     private static final String PROPERTY_INTERNAL_MEMORY_AVAILABLE = "internalMemoryAvailable";
+    /**
+     * Column for the field of each records that holds the free external memory.
+     */
     private static final String PROPERTY_EXTERNAL_MEMORY_FREE = "externalMemoryFree";
+
+    /**
+     * Column for the field of each records that holds the total available external memory.
+     */
     private static final String PROPERTY_EXTERNAL_MEMORY_AVAILABLE = "externalMemoryAvailable";
 
+    /**
+     * Default ctor
+     * @param context the application context
+     */
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -105,6 +133,13 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Function that returns an instance of the MemoryInfo class, holding the information of a record
+     * of a particular date.
+     * @param date the date of the record that we would like to retrieve
+     * @return a MemoryInfo instance
+     * @throws ParseException in case the method parseLong() of Long class fails.
+     */
     public MemoryInfo getRecord(Date date) throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -124,6 +159,12 @@ public class DBHandler extends SQLiteOpenHelper {
         return memoryInfo;
     }
 
+    /**
+     * Function that returns a List of MemoryInfo objects, holding all available records.
+     * Used in the ListView of all saved records.
+     * @return the List<MemoryInfo> that are hold by our database
+     * @throws ParseException in case the method parseLong() of Long class fails.
+     */
     public List<MemoryInfo> getAllRecords() throws ParseException{
         List<MemoryInfo> records = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_MEMORY_INFO;
@@ -143,6 +184,10 @@ public class DBHandler extends SQLiteOpenHelper {
         return records;
     }
 
+    /**
+     * Method that returns the count of records that have been saved in the database.
+     * @return the total count.
+     */
     public int getRecordsCount() {
         String countQuery = "SELECT  * FROM " + TABLE_MEMORY_INFO;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -153,10 +198,17 @@ public class DBHandler extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
+    /**
+     * Currently not supported.
+     * @return
+     */
     public int updateRecord() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Currently not supported
+     */
     public void deleteRecord() {
         throw new UnsupportedOperationException();
     }

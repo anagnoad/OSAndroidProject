@@ -4,9 +4,14 @@ import android.app.ActivityManager;
 import android.os.Debug;
 
 /**
+ * Class that holds information about the processes that are active on the device.
  * Created by Steve Laskaridis on 1/5/2015.
  */
 public class Process {
+    /**
+     * An instance of the ActivityManager's RunningAppProcessInfo class, that holds information
+     * about the process.
+     */
     private ActivityManager.RunningAppProcessInfo theProcess;
     private Debug.MemoryInfo memoryInfo;
 
