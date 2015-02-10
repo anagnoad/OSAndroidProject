@@ -147,8 +147,8 @@ public class MainActivity extends ActionBarActivity
             }
         });
 
-        long[] freeMemory = SystemQuery.freeMemory();
-        long[] availableMemory = SystemQuery.totalMemory();
+        long[] freeMemory = MemoryQuery.freeMemory();
+        long[] availableMemory = MemoryQuery.totalMemory();
         Date today = new Date();
 
         try {

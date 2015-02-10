@@ -28,78 +28,12 @@ import java.util.List;
 public class SystemQuery {
 
 
-    /*************************************************************************************************
-     Returns size in bytes.
-
-     If you need calculate external memory, change this:
-     StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-     to this:
-     StatFs statFs = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-     **************************************************************************************************/
-    public static long[] totalMemory()
-    {
-        long[] total = new long[2];
-        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-        StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        if(Build.VERSION.SDK_INT>18) {
-            total[0] = ((long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
-            total[1] = ((long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
-        }
-        else
-        {
-            total[0] = ((long) statFs.getBlockCount() * (long) statFs.getBlockSize());
-            total[1] = ((long) statFsE.getBlockCount() * (long) statFsE.getBlockSize());
-        }
-        return total;
-    }
-
-    public static long[] freeMemory()
-    {
-        long[] free = new long[2];
-        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-        StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        if(Build.VERSION.SDK_INT>18) {
-            free[0] = (statFs.getAvailableBlocksLong() * (long) statFs.getBlockSizeLong());
-            free[1] = (statFsE.getAvailableBlocksLong() * (long) statFsE.getBlockSizeLong());
-        }
-        else {
-            free[0] = (statFs.getAvailableBlocks() * (long) statFs.getBlockSize());
-            free[1] = (statFsE.getAvailableBlocks() * (long) statFsE.getBlockSize());
-        }
-        return free;
-    }
-
-    public static long[] occupiedMemory()
-    {
-        long[] total = new long[2];
-        long[] free = new long[2];
-        long[] occupied = new long[2];
-        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-        StatFs statFsE = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-        if(Build.VERSION.SDK_INT>18) {
-            total[0] = ((long) statFs.getBlockCountLong() * (long) statFs.getBlockSizeLong());
-            free[0] = (statFs.getAvailableBlocksLong() * (long) statFs.getBlockSizeLong());
-        }
-        else
-        {
-            total[0] = ((long) statFs.getBlockCount() * (long) statFs.getBlockSize());
-            free[0] = (statFs.getAvailableBlocks() * (long) statFs.getBlockSize());
-        }
-        occupied[0]   = total[0] - free[0];
-        if(Build.VERSION.SDK_INT>18) {
-            total[1] = ((long) statFsE.getBlockCountLong() * (long) statFsE.getBlockSizeLong());
-            free[1] = (statFsE.getAvailableBlocksLong() * (long) statFsE.getBlockSizeLong());
-        }
-        else
-        {
-            total[1] = ((long) statFsE.getBlockCount() * (long) statFsE.getBlockSize());
-            free[1] = (statFsE.getAvailableBlocks() * (long) statFsE.getBlockSize());
-        }
-        occupied[1]   = total[1] - free[1];
-
-        return occupied;
-    }
-
+    /**
+     * Method that returns a list of Process's instances, holding information about all process
+     * that are currently active in the device.
+     * @param applicationContext the application context
+     * @return the list of processes.
+     */
     public static List<Process> getAllProcesses(Context applicationContext) {
         ArrayList<Process> toBeReturned = new ArrayList<>();
         ActivityManager am = (ActivityManager)applicationContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -120,6 +54,17 @@ public class SystemQuery {
         return toBeReturned;
     }
 
+    /**
+     * Method that returns all device information that is needed:
+     * OS Name, Kernel Version, Model Name, UpTime, Network Type, Network State, Battery and Available Memory.
+     * This information is stored in a HashMap and returned as is.
+     *
+     * The DeviceInfoFragment is needed as some of the information needed is not available instantly, and
+     * a listener is required in order to "receive" the information.
+     * @param applicationContext the application context
+     * @param fragment the fragment of DeviceInfo
+     * @return
+     */
     public static HashMap<String,String> getSystemMetrics(Context applicationContext, final DeviceInfoFragment fragment) {
         HashMap<String, String> toBeReturned = new HashMap<>();
         String osName = Build.VERSION.RELEASE;//System.getProperty("os.name");
@@ -170,7 +115,7 @@ public class SystemQuery {
         toBeReturned.put("Network State", "N/A");
         toBeReturned.put("Battery", "N/A");
 
-        long[] freeMemory = freeMemory();
+        long[] freeMemory = MemoryQuery.freeMemory();
         freeMemory[0] = freeMemory[0]/1024/1024;
         freeMemory[1] = freeMemory[1]/1024/1024;
         toBeReturned.put("Internal Memory Available", String.valueOf(freeMemory[0]) + " MB");
