@@ -21,18 +21,24 @@ import gr.auth.csd.taskmanager.dummy.DummyContent;
  */
 public class ProcessesFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    /**
+     * Title name for listview item.
+     */
     private static final String ARG_PARAM1 = "param1";
+    /**
+     * Subtitle name for listview item.
+     */
     private static final String ARG_PARAM2 = "param2";
+    /**
+     * The listview shown in the fragment.
+     */
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
     public static ProcessesFragment newInstance(String param1, String param2) {
         ProcessesFragment fragment = new ProcessesFragment();
         Bundle args = new Bundle();
@@ -63,7 +69,6 @@ public class ProcessesFragment extends ListFragment {
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1,
                 SystemQuery.getAllProcesses(getActivity().getApplicationContext())));
-        // TODO: Change Adapter to display your content
 
     }
 
@@ -119,7 +124,6 @@ public class ProcessesFragment extends ListFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
 

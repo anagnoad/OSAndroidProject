@@ -29,15 +29,27 @@ import java.util.Set;
  * create an instance of this fragment.
  */
 public class DeviceInfoFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    /**
+     * Title name for listview item.
+     */
     private static final String ARG_PARAM1 = "param1";
+    /**
+     * Subtitle name for listview item.
+     */
     private static final String ARG_PARAM2 = "param2";
-    private TextView sampleTextView;
+    /**
+     * The listview shown in the fragment.
+     */
     private ListView sampleListView;
 
-    // TODO: Rename and change types of parameters
+    /**
+     * Sample
+     */
     private String mParam1;
+    /**
+     *
+     */
     private String mParam2;
 
     final static HashMap<String, Integer> positioning;
@@ -65,7 +77,6 @@ public class DeviceInfoFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment DeviceInfoFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static DeviceInfoFragment newInstance(String param1, String param2) {
         DeviceInfoFragment fragment = new DeviceInfoFragment();
         Bundle args = new Bundle();
@@ -107,6 +118,11 @@ public class DeviceInfoFragment extends Fragment {
         return inflatedView;
     }
 
+    /**
+     * Populates the list with own data
+     * @param deviceInfoData the data to popylate the list
+     * @return Array of Hashes for listview population
+     */
     private ArrayList<Map<String, String>> buildData(HashMap<String,String> deviceInfoData)
     {
         ArrayList<Map<String,String>> list = new ArrayList<>();
@@ -130,7 +146,6 @@ public class DeviceInfoFragment extends Fragment {
         return itemM;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -165,14 +180,14 @@ public class DeviceInfoFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 
-    public TextView getSampleTextView() {
-        return sampleTextView;
-    }
-
+    /**
+     * Refresh values inside the textViews when needed.
+     * @param key The key of the entry whose value is to change.
+     * @param newValue The new value of the entry.
+     */
     public void refreshValue(String key, String newValue) {
         HashMap<String, String> toBeAltered = (HashMap<String, String>) this.sampleListView.getAdapter().getItem(positioning.get(key));
         toBeAltered.put("subitem", newValue);
