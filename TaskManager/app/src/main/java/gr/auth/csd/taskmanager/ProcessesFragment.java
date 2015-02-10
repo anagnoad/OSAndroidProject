@@ -96,7 +96,7 @@ public class ProcessesFragment extends ListFragment {
 //            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
             Process proc = (Process)l.getAdapter().getItem(position);
             String processInfo = proc.toLongString();
-            new AlertDialog.Builder(this.getActivity())
+            new AlertDialog.Builder(this.getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_DARK)
                     .setTitle("Process info")
                     .setMessage(processInfo)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

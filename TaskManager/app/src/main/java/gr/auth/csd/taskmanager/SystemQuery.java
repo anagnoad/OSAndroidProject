@@ -129,7 +129,7 @@ public class SystemQuery {
         String modelName = Build.MODEL;
         toBeReturned.put("Model Name", modelName);
         Long upTimeMins = SystemClock.uptimeMillis()/(1000*60);
-        toBeReturned.put("UpTime", upTimeMins.toString());
+        toBeReturned.put("UpTime", upTimeMins.toString()+" mins");
         TelephonyManager tm = (TelephonyManager)applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = tm.getNetworkType();
         String networkTypeString="";
