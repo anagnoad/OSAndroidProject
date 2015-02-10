@@ -13,25 +13,50 @@ public class Process {
      * about the process.
      */
     private ActivityManager.RunningAppProcessInfo theProcess;
+
+    /**
+     * An instance of the Debug's MemoryInfo class, that holds information about the memory that
+     * each process has allocated.
+     */
     private Debug.MemoryInfo memoryInfo;
 
+    /**
+     * Ctor that needs both this class's fields as parameters.
+     * @param theProcess
+     * @param memoryInfo
+     */
     public Process(ActivityManager.RunningAppProcessInfo theProcess, Debug.MemoryInfo memoryInfo) {
         this.theProcess = theProcess;
         this.memoryInfo = memoryInfo;
     }
 
+    /**
+     * Ctor that needs only the RunningAppProcessInfo field as a parameter.
+     * @param theProcess
+     */
     public Process(ActivityManager.RunningAppProcessInfo theProcess) {
         this.theProcess = theProcess;
     }
 
+    /**
+     * Getter for the MemoryInfo of the process.
+     * @return the memory info of the process.
+     */
     public Debug.MemoryInfo getMemoryInfo() {
         return memoryInfo;
     }
 
+    /**
+     * Abstraction, in order to get just the PID of the process (held in the RunningAppProcessInfo field)
+     * @return the pid of the process.
+     */
     public int getPid(){
         return theProcess.pid;
     }
-
+    /**
+     * Abstraction, in order to get just the name of the process (held in the RunningAppProcessInfo field)
+     * @return the name of the process.
+     */
     public String getProcessName() {
         return theProcess.processName;
     }
@@ -40,6 +65,10 @@ public class Process {
         return getProcessName()+" ("+getPid()+")";
     }
 
+    /**
+     * Method that returns a more verbose version of the serialized "Process" instance.
+     * @return
+     */
     public String toLongString(){
         StringBuilder toBeReturned = new StringBuilder();
         toBeReturned.append("Process Name: ");
