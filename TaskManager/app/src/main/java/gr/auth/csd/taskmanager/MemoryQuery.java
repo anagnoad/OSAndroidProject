@@ -5,7 +5,7 @@ import android.os.StatFs;
 import android.os.Environment;
 
 /**
- * Created by Steve Laskaridis on 1/5/2015.
+ * Helper static methods Class for acquiring internal and external memory info.
  */
 public class MemoryQuery {
 
