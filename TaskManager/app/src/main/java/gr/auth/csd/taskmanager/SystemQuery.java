@@ -171,8 +171,10 @@ public class SystemQuery {
         toBeReturned.put("Battery", "N/A");
 
         long[] freeMemory = freeMemory();
-        toBeReturned.put("Internal Memory Available", String.valueOf(freeMemory[0]));
-        toBeReturned.put("External Memory Available", String.valueOf(freeMemory[1]));
+        freeMemory[0] = freeMemory[0]/1024/1024;
+        freeMemory[1] = freeMemory[1]/1024/1024;
+        toBeReturned.put("Internal Memory Available", String.valueOf(freeMemory[0]) + " MB");
+        toBeReturned.put("External Memory Available", String.valueOf(freeMemory[1]) + " MB");
 
       //  HashMap<String,String> test = (HashMap<String,String>)sampleListView.getAdapter().getItem(0);
         TelephonyManager telMng = (TelephonyManager)applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
